@@ -51,13 +51,12 @@ export default class DropZone extends Component {
         upLoadStatus: response.status,
         upLoadStatusText: response.statusText,
         upLoadReturnDataID: response.data.id,
-        dropActive: false
+        dropActive: false,
+        isUploading: false
       });
     } catch (error) {
       console.log(error);
     }
-    // reset state values
-    // this.setState({ ...initialState });
   };
 
   onDrop = acceptedFiles => {
@@ -70,7 +69,7 @@ export default class DropZone extends Component {
   };
 
   render() {
-    const { dropActive, dropFileName, upLoadStatus } = this.state;
+    const { dropActive, dropFileName, upLoadStatus, isUploading } = this.state;
     return (
       <div>
         <h2 style={{ color: "#057550" }}>
@@ -109,7 +108,7 @@ export default class DropZone extends Component {
                   </div>
                 </div>
               )}
-              {dropActive && !upLoadStatus && (
+              {dropActive && !upLoadStatus && !isUploading && (
                 <div>
                   <div>
                     Your file <strong>{dropFileName}</strong> is ready to be
@@ -141,6 +140,13 @@ export default class DropZone extends Component {
                   </div>
                 </div>
               )}
+
+              {isUploading && (
+                <progress className="progress is-medium is-primary" max="100">
+                  45%
+                </progress>
+              )}
+
               {upLoadStatus === 201 && (
                 <div className="notification is-success">
                   <button
