@@ -5,6 +5,15 @@ import Dropzone from "react-dropzone";
 
 import "bulma/css/bulma.css";
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  margin: 1em auto;
+`;
+
 const DropContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -14,9 +23,6 @@ const DropContainer = styled.div`
   height: 200px;
   margin: 1em auto;
   border: 1px dashed black;
-
-  &-button {
-  }
 `;
 
 const initialState = {
@@ -27,34 +33,53 @@ const initialState = {
   upLoadStatusText: undefined,
   upLoadStatus: null,
   upLoadReturnDataID: null
+  // binaryTotal: null
 };
 
 export default class DropZone extends Component {
   state = { ...initialState };
 
-  onSend = async () => {
+  componentDidMount = () => {
+    axios
+      .get("https://fhirtest.uhn.ca/baseDstu3/Binary?_summary=count")
+      .then(resp => {
+        this.setState({ binaryTotal: resp.data.total });
+      });
+  };
+
+  // send upload & fetch total of binaries  files
+  onSend = () => {
     // is uploading indicator
     this.setState({ isUploading: true });
-    console.log("send func");
+
     // file from state
     const { dropFile } = this.state;
     // sending file to api
     try {
-      const response = await axios({
+      axios({
         method: "post",
         url: "https://fhirtest.uhn.ca/baseDstu3/Binary",
         data: dropFile
-      });
-      //update state on return
-      console.log(response);
-      this.setState({
-        upLoadStatus: response.status,
-        upLoadStatusText: response.statusText,
-        upLoadReturnDataID: response.data.id,
-        dropActive: false,
-        isUploading: false
+      }).then(response => {
+        //update state on return
+        // console.log("resp1:", response);
+        this.setState({
+          upLoadStatus: response.status,
+          upLoadStatusText: response.statusText,
+          upLoadReturnDataID: response.data.id,
+          dropActive: false,
+          isUploading: false
+        });
+
+        axios
+          .get("https://fhirtest.uhn.ca/baseDstu3/Binary?_summary=count")
+          .then(resp => {
+            // console.log("resp2:", resp);
+            this.setState({ binaryTotal: resp.data.total });
+          });
       });
     } catch (error) {
+      this.setState({ error });
       console.log(error);
     }
   };
@@ -69,9 +94,16 @@ export default class DropZone extends Component {
   };
 
   render() {
-    const { dropActive, dropFileName, upLoadStatus, isUploading } = this.state;
+    const {
+      dropActive,
+      dropFileName,
+      upLoadStatus,
+      isUploading,
+      binaryTotal
+    } = this.state;
+
     return (
-      <div>
+      <Wrapper>
         <h2 style={{ color: "#057550" }}>
           You can upload here a report. Please be award that your report is
           shared with practitioners.
@@ -79,6 +111,7 @@ export default class DropZone extends Component {
         <Dropzone onDrop={this.onDrop}>
           {({ getRootProps, getInputProps, isDragActive, isDragReject }) => (
             <DropContainer {...getRootProps()}>
+              {/* Reactive Drop zone */}
               {!dropActive && !upLoadStatus && (
                 <div>
                   <div>
@@ -102,12 +135,14 @@ export default class DropZone extends Component {
                       "This file type is not accepted! Try with .pdf"}
                   </div>
                   <div>
+                    {/* eslint-disable-next-line */}
                     <a className="button is-link" style={{ width: "90%" }}>
                       Select file to upload
                     </a>
                   </div>
                 </div>
               )}
+              {/* Drop zone with element on standby */}
               {dropActive && !upLoadStatus && !isUploading && (
                 <div>
                   <div>
@@ -115,6 +150,7 @@ export default class DropZone extends Component {
                     uploaded
                   </div>
                   <div>
+                    {/* eslint-disable-next-line */}
                     <a
                       className="button is-success"
                       style={{
@@ -126,12 +162,14 @@ export default class DropZone extends Component {
                     >
                       Upload
                     </a>
+                    {/* eslint-disable-next-line */}
                     <a
                       className="button is-danger"
                       style={{ width: "90%" }}
                       onClick={() =>
                         this.setState({
-                          ...initialState
+                          ...initialState,
+                          binaryTotal
                         })
                       }
                     >
@@ -140,13 +178,13 @@ export default class DropZone extends Component {
                   </div>
                 </div>
               )}
-
+              {/* loader during file upload */}
               {isUploading && (
                 <progress className="progress is-medium is-primary" max="100">
                   45%
                 </progress>
               )}
-
+              {/* uploading attempt file result */}
               {upLoadStatus === 201 && (
                 <div className="notification is-success">
                   <button
@@ -159,8 +197,19 @@ export default class DropZone extends Component {
             </DropContainer>
           )}
         </Dropzone>
-        <div className="result" />
-      </div>
+        <div
+          className="tags has-addons"
+          style={{ marginRight: "1em", marginLeft: "2em" }}
+        >
+          <span className="tag is-dark">Total files</span>
+          <span
+            className="tag"
+            style={{ backgroundColor: "#057550", color: "white" }}
+          >
+            {binaryTotal}
+          </span>
+        </div>
+      </Wrapper>
     );
   }
 }
