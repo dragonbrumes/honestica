@@ -48,7 +48,7 @@ export default class DropZone extends Component {
   };
 
   // send upload & fetch total of binaries  files
-  onSend = () => {
+  onSend = async () => {
     // is uploading indicator
     this.setState({ isUploading: true });
 
@@ -56,7 +56,7 @@ export default class DropZone extends Component {
     const { dropFile } = this.state;
     // sending file to api
     try {
-      axios({
+      await axios({
         method: "post",
         url: "https://fhirtest.uhn.ca/baseDstu3/Binary",
         data: dropFile
