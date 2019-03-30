@@ -70,7 +70,6 @@ export default class DropZone extends Component {
   };
 
   render() {
-    // const { upLoadStatusText, upLoadStatus, isUploading } = this.state;
     const { dropActive, dropFileName, upLoadStatus } = this.state;
     return (
       <div>
@@ -155,13 +154,6 @@ export default class DropZone extends Component {
           )}
         </Dropzone>
         <div className="result" />
-        {/* {upLoadStatus !== null ? (
-          `<p>${upLoadStatusText}</p>`
-        ) : (
-          <progress className="progress is-large is-info" max="100">
-            60%
-          </progress>
-        )} */}
       </div>
     );
   }
