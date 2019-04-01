@@ -2,20 +2,32 @@
   "name": "lifen",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "axios": "^0.18.0",
     "bulma": "^0.7.4",
+    "electron-is-dev": "^1.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-dropzone": "^10.0.6",
     "react-scripts": "2.1.8",
     "styled-components": "^4.2.0"
   },
+  "main": "public/electron.js",
+  "build": {
+    "appId": "com.electron.test",
+    "files": [
+      "build/**/*",
+      "build/icon.*"
+    ]
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "desktop-dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "desktop-exe": "npm run build && electron-builder"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -25,5 +37,12 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "cross-env": "^5.2.0",
+    "electron": "^4.1.3",
+    "electron-builder": "^20.39.0",
+    "wait-on": "^3.2.0"
+  }
 }
