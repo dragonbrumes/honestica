@@ -4,12 +4,40 @@ import DropZone from "./Components/Dropzone";
 
 import "bulma/css/bulma.css";
 
+const electron = window.require("electron");
+const ipcRenderer = electron.ipcRenderer;
+
+// test****************************
+
+// console.log(ipcRenderer.sendSync("synchronous-message", "ping")); // affiche "pong"
+
+// ipcRenderer.on("asynchronous-reply", (event, arg) => {
+//   console.log(arg); // affiche "pong"
+// });
+// ipcRenderer.send("asynchronous-message", "ping");
+// let newFile = "";
+// ipcRenderer.on("send-data", (event, file) => {
+//   // console.log(arg); // affiche "pong"
+//   // console.log("ipcRenderer");
+//   newFile = file;
+//   console.log(newFile);
+// });
+
+// /test
+
 class App extends Component {
-  onDrop = acceptedFiles => {
-    console.log(acceptedFiles);
+  state = {
+    file: undefined,
+    name: undefined
   };
 
   render() {
+    // Electron listener
+    ipcRenderer.on("send-data", (event, data) => {
+      const { file, name } = data;
+      this.setState({ file, name });
+    });
+
     return (
       <div className="App">
         <header className="App-header">
@@ -22,7 +50,7 @@ class App extends Component {
           </section>
         </header>
         <div className="App-drop">
-          <DropZone />
+          <DropZone file={this.state.file} name={this.state.name} />
         </div>
       </div>
     );
