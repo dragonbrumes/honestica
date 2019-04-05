@@ -10,22 +10,8 @@ const path = require("path");
 const url = require("url");
 const isDev = require("electron-is-dev");
 
-/***** */
-// ipcMain.on("asynchronous-message", (event, arg) => {
-//   console.log(arg); // affiche "ping"
-//   event.sender.send("asynchronous-reply", "pong");
-// });
-// ipcMain.on("synchronous-message", (event, arg) => {
-//   console.log(arg); // affiche "ping"
-//   event.returnValue = "pong";
-// });
-
-// ipcMain.emit("send-data", "content");
-
 // spy the dir for new file
 watch("FHIR", { filter: /\.pdf$/ }, function(evt, name) {
-  // console.log("%s changed.", name);
-  // console.log(name);
 
   // if new file send it to the front
   if (evt === "update") {
@@ -36,18 +22,13 @@ watch("FHIR", { filter: /\.pdf$/ }, function(evt, name) {
         throw err;
       }
       let content = data;
-      // console.log("watch send");
-      // ipcMain.sendSync("send-data", content);
-      // ipcRenderer("send-data", { foo: "bar" });
-      // ipcMain.emit("send-data", content);
-      // BrowserWindow.webContents.send("send-data", content);
-      // console.log(content);
+
     });
 
-    // ipcRenderer.send("loading", "go");
-  } // if
+  
+  } 
 });
-//** */
+
 
 let mainWindow;
 

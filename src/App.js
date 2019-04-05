@@ -7,24 +7,6 @@ import "bulma/css/bulma.css";
 const electron = window.require("electron");
 const ipcRenderer = electron.ipcRenderer;
 
-// test****************************
-
-// console.log(ipcRenderer.sendSync("synchronous-message", "ping")); // affiche "pong"
-
-// ipcRenderer.on("asynchronous-reply", (event, arg) => {
-//   console.log(arg); // affiche "pong"
-// });
-// ipcRenderer.send("asynchronous-message", "ping");
-// let newFile = "";
-// ipcRenderer.on("send-data", (event, file) => {
-//   // console.log(arg); // affiche "pong"
-//   // console.log("ipcRenderer");
-//   newFile = file;
-//   console.log(newFile);
-// });
-
-// /test
-
 class App extends Component {
   state = {
     file: undefined,
